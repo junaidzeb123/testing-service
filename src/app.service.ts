@@ -112,6 +112,12 @@ export class AppService {
         doTime();
 
         // find out unique combinations to update the data for
+        // unique comb is having all the unique strings created from trader_address + token_address and new_trades will
+        // have all the trades to be added in the structure like 
+        // new_trades = {
+        //     trader_address + token_address : [] an array of all trades of a unique   trader_address + token_address
+        // }
+
         let unique_combs: any = new Set();
         for(const obj of dataToAdd) {
             const key = `${obj.trader_address}${obj.token_address}`;
@@ -127,14 +133,22 @@ export class AppService {
 
         doTime();
 
+        // as we have created the ids of new trades to be inserted by  trader_address + token_address in unique_combs
+        // so if any documents already exits in ProcessedTradesMetadataIndex having the  same   trader_address and 
+        // token_address  will be returned here to add more data from new trades of same rader_address and 
+        // token_address
         let existingProcessedMetadata: any = await this.elkService.getDocsByIds(this.elkService.ProcessedTradesMetadataIndex, Array.from(unique_combs));
         
         doTime();
         
+
+        // same thing as above for  ProcessedTradesMetadataIndex. here it is for FinalTradesYearIndex
         let existingFinalTradesYear: any = await this.elkService.getDocsByIds(this.elkService.FinalTradesYearIndex, Array.from(unique_combs)); 
         
         doTime();
         
+        // functions taking the list of documents and returning an object having structure like this 
+        // { id : { document._source }} 
         const conv = (li: any[]) => {
             const out = {};
             for (const ele of li) {
@@ -149,19 +163,50 @@ export class AppService {
         doTime();
        
         existingFinalTradesYear = conv(existingFinalTradesYear);
+
         let allProcessedTrades = [];
 
         doTime();
 
+
+        // as we have a set having strings of all unqiue trader_address + token_address  and an obj
+        // new_trades having all the new trades coming from syve in the structure of  
+        // new_trades = {
+        //     trader_address + token_address : [] an array of all trades of a unique   trader_address + token_address
+        // }
+        // so here we all iterating through each of  the new_trades element so get procssedTrade and finalyeartrade of 
+        // a unqiue combination of trader_address + token_address and storing in allProcessedTrades
+
         for (const unique_comb of unique_combs) {
             // console.log("doing", unique_comb)
             const { processedTradesMetadata, processedTrades } = await this.calculationsService.getProcessedTrade(new_trades[unique_comb], existingProcessedMetadata[unique_comb]);
+
             existingFinalTradesYear[unique_comb] = await this.calculationsService.getFinalTrade(processedTrades, existingFinalTradesYear[unique_comb]);
+
             existingProcessedMetadata[unique_comb] = processedTradesMetadata;
             allProcessedTrades.push(...processedTrades);
         }
 
         doTime();
+
+        /**
+         * objToList do some like this
+         * const inputObj = 
+        *       {                                               [
+                    a: { prop1: 'value1' },                       { "prop1": "value1", "id": "a" },
+                    b: { prop1: 'value2' },   -------------->    { "prop1": "value2", "id": "b" },
+                    c: { prop1: 'value3' }                       { "prop1": "value3", "id": "c" }
+                };                                               ]
+
+                the after passing from map the  finally existingFinalTradesYear will look like 
+                [
+                     { "prop1": "value1", "id": "a" , __index : finalTradeYearIndex, __isUpdate : true },
+                     { "prop1": "value1", "id": "b" , __index : finalTradeYearIndex, __isUpdate : true },
+                     { "prop1": "value1", "id": "c" , __index : finalTradeYearIndex, __isUpdate : true },
+               ]
+
+               same for existingProcessedMetadata
+         */
 
         existingFinalTradesYear = this.utilsService.objToList(existingFinalTradesYear, "__id")
             .map(x=>({...x, __index: this.elkService.FinalTradesYearIndex, __isUpdate: true}));
@@ -402,16 +447,18 @@ export class AppService {
 
         const trades = await this.elkService.retriveTrade(this.elkService.DexTradesIndex, trader_address, token_address);
 
-        const ElkfinalYearTrades = await this.elkService.retriveTrade(this.elkService.FinalTradesYearIndex, trader_address, token_address);
+        const ElkfinalYearTrades = await this.elkService.getDocsByIds(this.elkService.FinalTradesYearIndex, [trader_address + token_address]);
+        //  await this.elkService.retriveTrade(this.elkService.FinalTradesYearIndex, trader_address, token_address);
 
         const ElkprocessedTrades = await this.elkService.retriveTrade(this.elkService.ProcessedTradesIndex, trader_address, token_address);
-
+        
         let { processedTrades, processedTradesMetadata } = await this.calculationsService.getProcessedTrade(trades);
         let finalTrade: any = await this.calculationsService.getFinalTrade(processedTrades);
 
         let response: string = ""
         let ans: Boolean = true;
-        if (JSON.stringify(ElkfinalYearTrades) === JSON.stringify(finalTrade)) {
+        
+        if (JSON.stringify(ElkfinalYearTrades[0]._source) === JSON.stringify(finalTrade)) {
             response += "Final year Trade are same. ";
         }
         else {
@@ -431,7 +478,7 @@ export class AppService {
         // console.log("ElkprocessedTrades:\n", ElkprocessedTrades);
         // console.log("processedTradesCalcuated:\n", processedTrades);
 
-        // console.log("ElkfinalYearTrades:\n", ElkfinalYearTrades);
+        // console.log("ElkfinalYearTrades:\n", ElkfinalYearTrades[0]._source);
         // console.log("finalYearCalcuated:\n", finalTrade);
 
         return { response, ans };

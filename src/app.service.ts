@@ -462,6 +462,8 @@ export class AppService {
             ans = false;            
         }
 
+        console.log(finalTrade);
+        
         // if ((JSON.stringify(ElkprocessedTrades) === JSON.stringify(processedTrades)) === false) {
         //     ans = false;
         //     console.log((ElkprocessedTrades));
@@ -496,7 +498,7 @@ export class AppService {
                 
                 console.log(result.result);
                 ans = false;
-                break;
+                // break;
             }
         }
         return ans;

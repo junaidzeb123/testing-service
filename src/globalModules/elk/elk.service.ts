@@ -462,4 +462,35 @@ export class ELKService {
         return result;
     }
 
+    // gettting random docs
+    async getRandomDocs(size) {
+        const seed = Date.now();
+      let result =   await this.searchClient.search({
+            index : this.DexTradesIndex,
+            size: size,
+            body: {
+                _source : ["token_address","trader_address"],
+                query: {
+                    function_score: {
+                        query: {
+                            match_all: {}
+                        },
+                        functions: [
+                            {
+                                random_score: {
+                                    field: "token_address",
+                                    seed:  seed.toString()
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+
+        })
+
+        return result.body.hits.hits.map((ele)=> ele._source );
+
+    }
+
 }

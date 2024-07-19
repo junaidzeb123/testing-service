@@ -8,11 +8,11 @@ import { UtilsService } from './globalModules/utils/utils.service';
 @Injectable()
 export class AppService {
 
-    constructor(private utilsService: UtilsService, private bottleneckService: BottleneckService, private elkService: ELKService, private blockchainService: BlockchainService, private calculationsService: CalculationsService) {}
+    constructor(private utilsService: UtilsService, private bottleneckService: BottleneckService, private elkService: ELKService, private blockchainService: BlockchainService, private calculationsService: CalculationsService) { }
 
     // Retrieves and adds dex pools to elk
     async addDexPoolsData() {
-        const pools = (await this.blockchainService.getAllDexPools()).map(x => ({...x, __id: x.pool_address, __index: this.elkService.DexPoolsIndex}));
+        const pools = (await this.blockchainService.getAllDexPools()).map(x => ({ ...x, __id: x.pool_address, __index: this.elkService.DexPoolsIndex }));
         this.elkService.createOrUpdateDocs(pools);
         return "success";
     }
@@ -51,7 +51,7 @@ export class AppService {
         trades.sort((a, b) => a.record_index - b.record_index);
         console.log(trades);
         console.log("trades length: ", trades.length);
-        const {processedTrades, processedTradesMetadata} = await this.calculationsService.getProcessedTrade(trades);
+        const { processedTrades, processedTradesMetadata } = await this.calculationsService.getProcessedTrade(trades);
         return await this.calculationsService.getFinalTrade(processedTrades);
     }
 
@@ -86,7 +86,7 @@ export class AppService {
         const doTime = () => {
             counter++;
             time = Date.now();
-            console.log(`${counter}: ${(time - lastTime)/1000}s`);
+            console.log(`${counter}: ${(time - lastTime) / 1000}s`);
             lastTime = time;
         }
 
@@ -103,9 +103,9 @@ export class AppService {
         // -> retrieve the data to remove. Assuming this data will not go above 10000
         // const data_to_remove = await this.elkService.getDocsByRange(this.elkService.DexTradesIndex, "timestamp", gte_timestamp, new_gte_timestamp - 1, 10000);
         // -> retrieve the data to add
-        
+
         doTime();
-        
+
         let dataToAdd = await this.blockchainService.getDexTradesByTimerange(lte_timestamp + 1, newLteTimestamp);
         let new_trades = {};
 
@@ -119,7 +119,7 @@ export class AppService {
         // }
 
         let unique_combs: any = new Set();
-        for(const obj of dataToAdd) {
+        for (const obj of dataToAdd) {
             const key = `${obj.trader_address}${obj.token_address}`;
             unique_combs.add(key);
             if (new_trades[key] === undefined) {
@@ -138,15 +138,15 @@ export class AppService {
         // token_address  will be returned here to add more data from new trades of same rader_address and 
         // token_address
         let existingProcessedMetadata: any = await this.elkService.getDocsByIds(this.elkService.ProcessedTradesMetadataIndex, Array.from(unique_combs));
-        
+
         doTime();
-        
+
 
         // same thing as above for  ProcessedTradesMetadataIndex. here it is for FinalTradesYearIndex
-        let existingFinalTradesYear: any = await this.elkService.getDocsByIds(this.elkService.FinalTradesYearIndex, Array.from(unique_combs)); 
-        
+        let existingFinalTradesYear: any = await this.elkService.getDocsByIds(this.elkService.FinalTradesYearIndex, Array.from(unique_combs));
+
         doTime();
-        
+
         // functions taking the list of documents and returning an object having structure like this 
         // { id : { document._source }} 
         const conv = (li: any[]) => {
@@ -159,9 +159,9 @@ export class AppService {
 
         // return existingProcessedMetadata;
         existingProcessedMetadata = conv(existingProcessedMetadata);
-       
+
         doTime();
-       
+
         existingFinalTradesYear = conv(existingFinalTradesYear);
 
         let allProcessedTrades = [];
@@ -209,26 +209,26 @@ export class AppService {
          */
 
         existingFinalTradesYear = this.utilsService.objToList(existingFinalTradesYear, "__id")
-            .map(x=>({...x, __index: this.elkService.FinalTradesYearIndex, __isUpdate: true}));
+            .map(x => ({ ...x, __index: this.elkService.FinalTradesYearIndex, __isUpdate: true }));
 
         doTime();
 
         existingProcessedMetadata = this.utilsService.objToList(existingProcessedMetadata, "__id")
-            .map(x=>({...x, __index: this.elkService.ProcessedTradesMetadataIndex, __isUpdate: true}));
+            .map(x => ({ ...x, __index: this.elkService.ProcessedTradesMetadataIndex, __isUpdate: true }));
 
         doTime();
 
-        allProcessedTrades = allProcessedTrades.map(x=>({...x, __index: this.elkService.ProcessedTradesIndex, __id: x.record_index}));
-        
+        allProcessedTrades = allProcessedTrades.map(x => ({ ...x, __index: this.elkService.ProcessedTradesIndex, __id: x.record_index }));
+
         doTime();
-        
-        dataToAdd = dataToAdd.map(x=>({...x, __index: this.elkService.DexTradesIndex, __id: x.record_index}));
-        
+
+        dataToAdd = dataToAdd.map(x => ({ ...x, __index: this.elkService.DexTradesIndex, __id: x.record_index }));
+
         doTime();
 
         // -> remove the data
         // const remove_docs_response = await this.elkService.removeDocsByRange(this.elkService.DexTradesIndex, "timestamp", gte_timestamp, newGteTimestamp - 1);
-        
+
         // -> update meta
         const old_meta = (await this.elkService.getDocById(this.elkService.DexTradesMetadataIndex, "main"))._source;
         const new_meta = [{
@@ -268,7 +268,7 @@ export class AppService {
         const doTime = () => {
             counter++;
             time = Date.now();
-            console.log(`${counter}: ${(time - lastTime)/1000}s`);
+            console.log(`${counter}: ${(time - lastTime) / 1000}s`);
             lastTime = time;
         }
 
@@ -285,9 +285,9 @@ export class AppService {
         // -> retrieve the data to remove. Assuming this data will not go above 10000
         // const data_to_remove = await this.elkService.getDocsByRange(this.elkService.DexTradesIndex, "timestamp", gte_timestamp, new_gte_timestamp - 1, 10000);
         // -> retrieve the data to add
-        
+
         doTime();
-        
+
         let dataToAdd = await this.blockchainService.getDexTradesByTimerange(lte_timestamp + 1, newLteTimestamp);
         let new_trades = {};
 
@@ -295,7 +295,7 @@ export class AppService {
 
         // find out unique combinations to update the data for
         let unique_combs: any = new Set();
-        for(const obj of dataToAdd) {
+        for (const obj of dataToAdd) {
             const key = `${obj.trader_address}${obj.token_address}`;
             unique_combs.add(key);
             if (new_trades[key] === undefined) {
@@ -310,13 +310,13 @@ export class AppService {
         doTime();
 
         let existingProcessedMetadata: any = await this.elkService.getDocsByIds(this.elkService.ProcessedTradesMetadataIndex, Array.from(unique_combs));
-        
+
         doTime();
-        
-        let existingFinalTradesYear: any = await this.elkService.getDocsByIds(this.elkService.FinalTradesYearIndex, Array.from(unique_combs)); 
-        
+
+        let existingFinalTradesYear: any = await this.elkService.getDocsByIds(this.elkService.FinalTradesYearIndex, Array.from(unique_combs));
+
         doTime();
-        
+
         const conv = (li: any[]) => {
             const out = {};
             for (const ele of li) {
@@ -327,9 +327,9 @@ export class AppService {
 
         // return existingProcessedMetadata;
         existingProcessedMetadata = conv(existingProcessedMetadata);
-       
+
         doTime();
-       
+
         existingFinalTradesYear = conv(existingFinalTradesYear);
         let allProcessedTrades = [];
 
@@ -346,26 +346,26 @@ export class AppService {
         doTime();
 
         existingFinalTradesYear = this.utilsService.objToList(existingFinalTradesYear, "__id")
-            .map(x=>({...x, __index: this.elkService.FinalTradesYearIndex, __isUpdate: true}));
+            .map(x => ({ ...x, __index: this.elkService.FinalTradesYearIndex, __isUpdate: true }));
 
         doTime();
 
         existingProcessedMetadata = this.utilsService.objToList(existingProcessedMetadata, "__id")
-            .map(x=>({...x, __index: this.elkService.ProcessedTradesMetadataIndex, __isUpdate: true}));
+            .map(x => ({ ...x, __index: this.elkService.ProcessedTradesMetadataIndex, __isUpdate: true }));
 
         doTime();
 
-        allProcessedTrades = allProcessedTrades.map(x=>({...x, __index: this.elkService.ProcessedTradesIndex, __id: x.record_index}));
-        
+        allProcessedTrades = allProcessedTrades.map(x => ({ ...x, __index: this.elkService.ProcessedTradesIndex, __id: x.record_index }));
+
         doTime();
-        
-        dataToAdd = dataToAdd.map(x=>({...x, __index: this.elkService.DexTradesIndex, __id: x.record_index}));
-        
+
+        dataToAdd = dataToAdd.map(x => ({ ...x, __index: this.elkService.DexTradesIndex, __id: x.record_index }));
+
         doTime();
 
         // -> remove the data
         // const remove_docs_response = await this.elkService.removeDocsByRange(this.elkService.DexTradesIndex, "timestamp", gte_timestamp, newGteTimestamp - 1);
-        
+
         // -> update meta
         const old_meta = (await this.elkService.getDocById(this.elkService.DexTradesMetadataIndex, "main"))._source;
         const new_meta = [{
@@ -396,40 +396,40 @@ export class AppService {
 
         console.log("doing ", traderAddress, tokenAddress);
 
-        if ((await this.elkService.getDocById(this.elkService.FinalTradesYearIndex, traderAddress+tokenAddress)) !== undefined) {
+        if ((await this.elkService.getDocById(this.elkService.FinalTradesYearIndex, traderAddress + tokenAddress)) !== undefined) {
             return false;
         };
 
         const trades = await this.elkService.getDexTradesByTraderAndToken(traderAddress, tokenAddress); // retrieve all trades of trader and token in increasing order of record_index
-        
+
         // do calculation
-        let {processedTrades, processedTradesMetadata} = await this.calculationsService.getProcessedTrade(trades);
+        let { processedTrades, processedTradesMetadata } = await this.calculationsService.getProcessedTrade(trades);
         let finalTrade: any = await this.calculationsService.getFinalTrade(processedTrades);
-        
+
         // write the calculated data
-        processedTrades = processedTrades.map(x=>({...x, __index: this.elkService.ProcessedTradesIndex, __id: x.record_index}));
-        processedTradesMetadata = [processedTradesMetadata].map(x=>({...x, __index: this.elkService.ProcessedTradesMetadataIndex, __id: traderAddress + tokenAddress}));
-        finalTrade = [{...finalTrade, __index: this.elkService.FinalTradesYearIndex, __id: traderAddress + tokenAddress}];
+        processedTrades = processedTrades.map(x => ({ ...x, __index: this.elkService.ProcessedTradesIndex, __id: x.record_index }));
+        processedTradesMetadata = [processedTradesMetadata].map(x => ({ ...x, __index: this.elkService.ProcessedTradesMetadataIndex, __id: traderAddress + tokenAddress }));
+        finalTrade = [{ ...finalTrade, __index: this.elkService.FinalTradesYearIndex, __id: traderAddress + tokenAddress }];
         await this.elkService.createOrUpdateDocs(processedTrades.concat(processedTradesMetadata).concat(finalTrade));
-        
+
         return true;
     }
 
     async calcFinalTrades() {
         let dexTradesMeta = (await this.elkService.getDocById(this.elkService.DexTradesMetadataIndex, "main"))._source;
         console.log("Received metadata now forward...");
-        const gen = this.elkService.getAllDexTrades(undefined, dexTradesMeta.processed_till === 0? undefined: [dexTradesMeta.processed_till]);
+        const gen = this.elkService.getAllDexTrades(undefined, dexTradesMeta.processed_till === 0 ? undefined : [dexTradesMeta.processed_till]);
         const limiter = this.bottleneckService.getLimiter("calcFinalTrade", { maxConcurrent: 10, minTime: 0 });
         for await (const data of gen) {
             console.log("doing chunk ", data[0].record_index);
             let promises: any[] = [];
-            for(const trade of data) {
-                promises.push(limiter.schedule(async ()=>await this.calcAndWriteFinalTrade(trade.trader_address, trade.token_address)));
+            for (const trade of data) {
+                promises.push(limiter.schedule(async () => await this.calcAndWriteFinalTrade(trade.trader_address, trade.token_address)));
             }
-            let doneCount = (await Promise.all(promises)).reduce((acc, x)=>acc + x, 0);
+            let doneCount = (await Promise.all(promises)).reduce((acc, x) => acc + x, 0);
             console.log("Done count: ", doneCount);
             console.log("updating processed_till");
-            await this.elkService.updateDocById(this.elkService.DexTradesMetadataIndex, "main", {...dexTradesMeta, processed_till: data[data.length - 1].record_index});
+            await this.elkService.updateDocById(this.elkService.DexTradesMetadataIndex, "main", { ...dexTradesMeta, processed_till: data[data.length - 1].record_index });
         }
         return "success";
     }
@@ -441,9 +441,9 @@ export class AppService {
         return data;
     }
 
-    
+
     //test
-    async varifyFinalTrades(trader_address, token_address): Promise<any> {
+    async test_finalTrades(trader_address, token_address): Promise<{ result, ans }> {
 
         const trades = await this.elkService.retriveTrade(this.elkService.DexTradesIndex, trader_address, token_address);
 
@@ -451,37 +451,54 @@ export class AppService {
         //  await this.elkService.retriveTrade(this.elkService.FinalTradesYearIndex, trader_address, token_address);
 
         const ElkprocessedTrades = await this.elkService.retriveTrade(this.elkService.ProcessedTradesIndex, trader_address, token_address);
-        
+
         let { processedTrades, processedTradesMetadata } = await this.calculationsService.getProcessedTrade(trades);
         let finalTrade: any = await this.calculationsService.getFinalTrade(processedTrades);
 
-        let response: string = ""
         let ans: Boolean = true;
-        
-        if (JSON.stringify(ElkfinalYearTrades[0]._source) === JSON.stringify(finalTrade)) {
-            response += "Final year Trade are same. ";
-        }
-        else {
-            response += "Final year Trade are different. ";
-            ans = false;
+
+        let response: string = ""
+        if ((JSON.stringify(ElkfinalYearTrades[0]._source) === JSON.stringify(finalTrade)) === false) {
+            ans = false;            
         }
 
+        // if ((JSON.stringify(ElkprocessedTrades) === JSON.stringify(processedTrades)) === false) {
+        //     ans = false;
+        //     console.log((ElkprocessedTrades));
+        //     console.log((processedTrades));
+            
+        // }
 
-        if (JSON.stringify(ElkprocessedTrades) === JSON.stringify(processedTrades)) {
-            response += "Processed Trade are same. ";
-        }
-        else {
-            response += "Processed Trade are different. ";
-            ans = false;
-        }
 
         // console.log("ElkprocessedTrades:\n", ElkprocessedTrades);
         // console.log("processedTradesCalcuated:\n", processedTrades);
 
         // console.log("ElkfinalYearTrades:\n", ElkfinalYearTrades[0]._source);
         // console.log("finalYearCalcuated:\n", finalTrade);
+        let result = {
+            "ElkfinalYearTrades": ElkfinalYearTrades[0]._source,
+            "CalcuatedfinalYear": finalTrade
+        }
 
-        return { response, ans };
+        return { result, ans };
     }
 
+
+    async test_finalTradesbyno(no: Number) {
+        const data = await this.elkService.getRandomDocs(no);
+        let ans = true;
+        for (const iterator of data) {
+            const result = await this.test_finalTrades(iterator.trader_address, iterator.token_address);
+            if (result.ans == false) {
+                console.log("Differnt Result from elk and calcuation");
+                console.log("trader_address: ", iterator.trader_address);
+                console.log("token_address: ", iterator.token_address);
+                
+                console.log(result.result);
+                ans = false;
+                break;
+            }
+        }
+        return ans;
+    }
 }

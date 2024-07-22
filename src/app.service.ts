@@ -59,7 +59,7 @@ export class AppService {
     async addDataToFrontUptil(uptil: number) {
         let { lte_timestamp } = (await this.elkService.getDocs(this.elkService.DexTradesMetadataIndex, 1))[0];
         while (lte_timestamp < uptil) {
-            let toAdd = this.utilsService.min(uptil - lte_timestamp, 1800);
+            let toAdd = this.utilsService.min(uptil - lte_timestamp, 450);
             if (toAdd <= 0) {
                 break;
             }
@@ -459,19 +459,15 @@ export class AppService {
 
         let response: string = ""
         if ((JSON.stringify(ElkfinalYearTrades[0]._source) === JSON.stringify(finalTrade)) === false) {
-            ans = false;            
+            console.log("final trades are differnt");
+            ans = false;
         }
 
-        console.log(finalTrade);
-        
         // if ((JSON.stringify(ElkprocessedTrades) === JSON.stringify(processedTrades)) === false) {
         //     ans = false;
-        //     console.log((ElkprocessedTrades));
-        //     console.log((processedTrades));
-            
+        //     console.log("processed trades are differnt");
+
         // }
-
-
         // console.log("ElkprocessedTrades:\n", ElkprocessedTrades);
         // console.log("processedTradesCalcuated:\n", processedTrades);
 
@@ -479,7 +475,9 @@ export class AppService {
         // console.log("finalYearCalcuated:\n", finalTrade);
         let result = {
             "ElkfinalYearTrades": ElkfinalYearTrades[0]._source,
-            "CalcuatedfinalYear": finalTrade
+            "CalcuatedfinalYear": finalTrade,
+            ElkprocessedTrades,
+            processedTrades 
         }
 
         return { result, ans };
@@ -488,6 +486,8 @@ export class AppService {
 
     async test_finalTradesbyno(no: Number) {
         const data = await this.elkService.getRandomDocs(no);
+        console.log(data);
+        
         let ans = true;
         for (const iterator of data) {
             const result = await this.test_finalTrades(iterator.trader_address, iterator.token_address);
@@ -495,7 +495,7 @@ export class AppService {
                 console.log("Differnt Result from elk and calcuation");
                 console.log("trader_address: ", iterator.trader_address);
                 console.log("token_address: ", iterator.token_address);
-                
+
                 console.log(result.result);
                 ans = false;
                 // break;

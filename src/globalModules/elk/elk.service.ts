@@ -446,6 +446,7 @@ export class ELKService {
 
         const data = await this.searchClient.search({
             index,
+            size : 10000,
             body: {
                 query: {
                     bool: {

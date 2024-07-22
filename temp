@@ -1,0 +1,102 @@
+{
+    "ElkprocessedTrades": [
+    {
+      "record_index": 7066609200000112,
+      "trader_address": "0xdea857e0896837a624b810e255f9b3848adc8efe",
+      "token_address": "0xfdd1d3fa1b837235ad00f9e6feb2e3850e9e0ab1",
+      "pool_address": "0xba980c08b1040f8dfc42596e7b64138ece98d174",
+      "trade_timestamp": 1689031775,
+      "block_number": 9007199254740991,
+      "avg_buy_price_eth": 3.838222916244422e-9,
+      "sell_price_eth": -2.6358683173427937e-8,
+      "trade_amount": 212663.54,
+      "first_buy": 0.10507404073576601
+    },
+    {
+      "record_index": 7066609200000118,
+      "trader_address": "0xdea857e0896837a624b810e255f9b3848adc8efe",
+      "token_address": "0xfdd1d3fa1b837235ad00f9e6feb2e3850e9e0ab1",
+      "pool_address": "0xba980c08b1040f8dfc42596e7b64138ece98d174",
+      "trade_timestamp": 1689031775,
+      "block_number": 9007199254740991,
+      "avg_buy_price_eth": 3.838222916244421e-9,
+      "sell_price_eth": 2.517754329983287e-9,
+      "trade_amount": 38467432.36,
+      "first_buy": 0.10507404073576601
+    },
+    {
+      "record_index": 7066594800000063,
+      "trader_address": "0xdea857e0896837a624b810e255f9b3848adc8efe",
+      "token_address": "0xfdd1d3fa1b837235ad00f9e6feb2e3850e9e0ab1",
+      "pool_address": "0xba980c08b1040f8dfc42596e7b64138ece98d174",
+      "trade_timestamp": 1689031331,
+      "block_number": 9007199254740991,
+      "avg_buy_price_eth": 8.129794654276531e-9,
+      "sell_price_eth": 3.4709082913531326e-9,
+      "trade_amount": 2000000,
+      "first_buy": 0.10507404073576601
+    },
+    {
+      "record_index": 7066594800000069,
+      "trader_address": "0xdea857e0896837a624b810e255f9b3848adc8efe",
+      "token_address": "0xfdd1d3fa1b837235ad00f9e6feb2e3850e9e0ab1",
+      "pool_address": "0xba980c08b1040f8dfc42596e7b64138ece98d174",
+      "trade_timestamp": 1689031331,
+      "block_number": 9007199254740991,
+      "avg_buy_price_eth": 8.129794654276531e-9,
+      "sell_price_eth": 5.949818554083413e-9,
+      "trade_amount": 10924562.698578581,
+      "first_buy": 0.10507404073576601
+    }
+  ],
+  "processedTrades": [
+    {
+      "record_index": 7066594800000063,
+      "trader_address": "0xdea857e0896837a624b810e255f9b3848adc8efe",
+      "token_address": "0xfdd1d3fa1b837235ad00f9e6feb2e3850e9e0ab1",
+      "pool_address": "0xba980c08b1040f8dfc42596e7b64138ece98d174",
+      "trade_timestamp": 1689031331,
+      "block_number": 9007199254740991,
+      "avg_buy_price_eth": 8.129794654276531e-9,
+      "sell_price_eth": 3.4709082913531326e-9,
+      "trade_amount": 2000000,
+      "first_buy": 0.10507404073576601
+    },
+    {
+      "record_index": 7066594800000069,
+      "trader_address": "0xdea857e0896837a624b810e255f9b3848adc8efe",
+      "token_address": "0xfdd1d3fa1b837235ad00f9e6feb2e3850e9e0ab1",
+      "pool_address": "0xba980c08b1040f8dfc42596e7b64138ece98d174",
+      "trade_timestamp": 1689031331,
+      "block_number": 9007199254740991,
+      "avg_buy_price_eth": 8.129794654276531e-9,
+      "sell_price_eth": 5.949818554083413e-9,
+      "trade_amount": 10924562.698578581,
+      "first_buy": 0.10507404073576601
+    },
+    {
+      "record_index": 7066609200000112,
+      "trader_address": "0xdea857e0896837a624b810e255f9b3848adc8efe",
+      "token_address": "0xfdd1d3fa1b837235ad00f9e6feb2e3850e9e0ab1",
+      "pool_address": "0xba980c08b1040f8dfc42596e7b64138ece98d174",
+      "trade_timestamp": 1689031775,
+      "block_number": 9007199254740991,
+      "avg_buy_price_eth": 3.838222916244422e-9,
+      "sell_price_eth": -2.6358683173427937e-8,
+      "trade_amount": 212663.54,
+      "first_buy": 0.10507404073576601
+    },
+    {
+      "record_index": 7066609200000118,
+      "trader_address": "0xdea857e0896837a624b810e255f9b3848adc8efe",
+      "token_address": "0xfdd1d3fa1b837235ad00f9e6feb2e3850e9e0ab1",
+      "pool_address": "0xba980c08b1040f8dfc42596e7b64138ece98d174",
+      "trade_timestamp": 1689031775,
+      "block_number": 9007199254740991,
+      "avg_buy_price_eth": 3.838222916244421e-9,
+      "sell_price_eth": 2.517754329983287e-9,
+      "trade_amount": 38467432.36,
+      "first_buy": 0.10507404073576601
+    }
+  ]
+}
